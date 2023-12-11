@@ -18,7 +18,7 @@ LiquidCrystal lcd(50, 51, 41, 39, 37, 35);
 Servo myservo;
 
 int cursorColumn = 0;
-int state = 0; // 0 start, 1 deal
+int state = 0; // 0 start, 1 number of cards, 2 deal
 int players = 0;
 int total = 0;
 int count = 0;
@@ -50,13 +50,21 @@ void loop() {
     lcd.clear();
     lcd.print("Cards per player");
     lcd.setCursor(0, 1);
+    int cursorPos = 0;
     char key;
+    int numCards = 0;
     do {
       key = keypad.getKey();
-    } while (!(key - 48 < 10 && key - 48 >= 0));
-   
-    lcd.print(key);                 // print key at (cursorColumn, 0)
-    total = players * (key - 48);
+      if (key - 48 < 10 && key - 48 >= 0) {
+        numCards = 10 * numCards + (key - 48);
+        lcd.print(key);
+        lcd.setCursor(++cursorPos, 1);
+      }
+      // Serial.println((int) key);
+    } while (key != 35);
+
+    total = players * numCards;
+    
     if (total > 52) {
       total = 52;
     }
